@@ -2,20 +2,24 @@ from django.test import TestCase
 from django.core.urlresolvers import resolve
 from django.http import HttpRequest
 
-from contact.views import index
+from contact.forms import ContactForm
+from .models import Contact
 
-class IndexTest(TestCase):
+from contact.views import contact_new
 
-    def test_contact_url_resolves_to_index_view(self):
-        found = resolve('/contact/')
-        self.assertEqual(found.func, index)
+class ContactTest(TestCase):
 
-    def test_index_returns_correct_html(self):
+    def test_contact_url_resolves_to_contact_view(self):
+        found = resolve('/contact/new/')
+        self.assertEqual(found.func, contact_new)
+
+    def test_contact_returns_correct_html(self):
         request = HttpRequest()
-        response = index(request)
-
+        response = contact_new(request)
         self.assertEqual(response.status_code, 200)
 
-    
-
-# Create your tests here.
+    def test_form_raises_error_with_invalid_email(self):
+        form_data = {'contact_name': 'something',
+                     'contact_email': 'test@test.com'}
+        form = ContactForm(data=form_data)
+        self.assertTrue(form.is_valid())

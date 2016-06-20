@@ -1,0 +1,12 @@
+<html>
+  <head>
+    <title>Contact form</title>
+  </head>
+    <body>
+    <h1>Contact Information</h1>
+    <form method='POST' class="post-form">{% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Save" />
+    </form>
+  </body>
+</html>
