@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib import messages
 from .forms import ContactForm
 
 
@@ -8,7 +9,8 @@ def contact_new(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('http://google.com')
+            messages.success(request, 'Contact information saved')
+            return redirect(contact_new)
     else:
         form = ContactForm()
 

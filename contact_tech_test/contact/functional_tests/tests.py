@@ -12,7 +12,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.quit()
 
     def test_can_retrieve_contact_form(self):
-        self.browser.get('http://localhost:8000/contact/')
-        self.assertIn('Contact form', self.browser.title)
+        self.browser.get('http://localhost:8000/contact/new/')
+        self.assertEqual(self.browser.title, 'Contact form')
 
-        self.fail('Finish the test!')
+        # self.fail('Finish the test!')
