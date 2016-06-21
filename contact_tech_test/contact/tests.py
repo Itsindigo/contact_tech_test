@@ -6,7 +6,7 @@ from contact.forms import ContactForm
 from contact.views import contact_new
 from .models import Contact
 
-class ContactTest(TestCase):
+class ContactFormTest(TestCase):
 
     def test_contact_url_resolves_to_contact_view(self):
         found = resolve('/contact/new/')
@@ -30,7 +30,7 @@ class ContactTest(TestCase):
         form = ContactForm(data=form_data)
         self.assertFalse(form.is_valid())
 
-    def test_post_returns_200_after_redirect(self):
+    def test_valid_form_POST_returns_200(self):
         self.c = Client()
         response = self.c.post(reverse('contact_new'), {
                      'contact_name': 'something',

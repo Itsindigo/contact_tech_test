@@ -5,4 +5,4 @@ class ContactForm(forms.ModelForm):
 
     class Meta:
         model = Contact
-        fields = ['contact_name', 'contact_email']
+        fields = '__all__'
