@@ -14,9 +14,7 @@ def contact_new(request):
             contact_email = cleaned.get('contact_email')
             contact_content = cleaned.get('contact_content')
             contact_type = cleaned['enquiry_type']._type
-            messages.success(request, 'Contact information saved')
-
-            form.save()
+            messages.success(request, 'Your message has been saved, a member of our team will be in contact soon.')
 
             message = "Name: %s,\n Email: %s,\n Content: %s,\n Type: %s" % (contact_name, contact_email, contact_content, contact_type)
             send_mail(
@@ -25,6 +23,8 @@ def contact_new(request):
                 'autoresponse@farm.com',
                 ['mattbridgesbusiness@gmail.com'],
                 fail_silently=False)
+
+            form.save()
             return redirect(contact_new)
     else:
         form = ContactForm()

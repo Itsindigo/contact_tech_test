@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.core import mail
 from django.core.urlresolvers import resolve, reverse
 from django.http import HttpRequest
 
@@ -17,23 +18,44 @@ class ContactFormTest(TestCase):
         response = contact_new(request)
         self.assertEqual(response.status_code, 200)
 
-    def test_form_accepts_valid_email_and_name(self):
-        form_data = {'contact_name': 'something',
-                     'contact_email': 'test@test.com'}
-        form = ContactForm(data=form_data)
-        self.assertTrue(form.is_valid())
-
-
-    def test_form_raises_error_with_invalid_email(self):
-        form_data = {'contact_name': 'something',
-                     'contact_email': 'not-an-email'}
-        form = ContactForm(data=form_data)
-        self.assertFalse(form.is_valid())
-
-    def test_valid_form_POST_returns_200(self):
-        self.c = Client()
-        response = self.c.post(reverse('contact_new'), {
+    def test_valid_form_POST_returns_200_and_saved_to_db(self):
+        response = self.client.post('/contact/new', {
                      'contact_name': 'something',
-                     'contact_email': 'test@test.com'},
+                     'contact_email': 'test@test.com',
+                     'contact_content': 'anything'},
                      follow=True,)
+        self.assertEqual(Contact.objects.count(), 1)
         self.assertEqual(response.status_code, 200)
+
+    def test_invalid_params_does_not_create_object(self):
+        response = self.client.post(reverse('contact_new'), {
+                     'contact_name': 'something',
+                     'contact_email': 'not-an-email'},
+                     follow=True,)
+        self.assertEqual(Contact.objects.count(), 0)
+
+class ContactModelTest(TestCase):
+
+    def test_contact_model_is_saved(self):
+        contact_1 = Contact.objects.create(contact_name="Matt")
+        contact_2 = Contact.objects.create(contact_name="Matthew")
+        collection = Contact.objects.all()
+
+        self.assertEqual(collection[0].contact_name, 'Matt')
+        self.assertEqual(collection[1].contact_name, 'Matthew')
+
+class EmailSendingTest(TestCase):
+
+    def test_an_email_is_sent(self):
+        user_input = {'contact_name': 'Matthew',
+                 'contact_email': 'matt@test.com',
+                 'contact_content': 'Some text',
+                 'enquiry_type': 'General Enquiry'}
+
+        self.response = self.client.post(
+                reverse('contact_new'),
+                data=user_input,
+                )
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'You received a contact form submission.')
