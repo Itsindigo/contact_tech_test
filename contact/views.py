@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
+from django.core.mail import send_mail
 from .forms import ContactForm
 
 
@@ -8,8 +9,22 @@ def contact_new(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()
+            cleaned = form.cleaned_data
+            contact_name = cleaned.get('contact_name')
+            contact_email = cleaned.get('contact_email')
+            contact_content = cleaned.get('contact_content')
+            contact_type = cleaned['enquiry_type']._type
             messages.success(request, 'Contact information saved')
+
+            form.save()
+
+            message = "Name: %s,\n Email: %s,\n Content: %s,\n Type: %s" % (contact_name, contact_email, contact_content, contact_type)
+            send_mail(
+                'You received a contact form submission.',
+                message,
+                'autoresponse@farm.com',
+                ['mattbridgesbusiness@gmail.com'],
+                fail_silently=False)
             return redirect(contact_new)
     else:
         form = ContactForm()
