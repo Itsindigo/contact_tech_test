@@ -103,11 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # SMTP server config
 
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'eats_indigo'
-EMAIL_HOST_PASSWORD = 'password1'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
